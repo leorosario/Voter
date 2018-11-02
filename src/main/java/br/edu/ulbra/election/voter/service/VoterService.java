@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VoterService {
@@ -41,7 +42,7 @@ public class VoterService {
     }
 
     public VoterOutput create(VoterInput voterInput) {
-        validateInput(voterInput, false);
+        validateInput(voterInput, false, null);
         Voter voter = modelMapper.map(voterInput, Voter.class);
         voter.setPassword(passwordEncoder.encode(voter.getPassword()));
         voter = voterRepository.save(voter);
@@ -65,7 +66,7 @@ public class VoterService {
         if (voterId == null){
             throw new GenericOutputException(MESSAGE_INVALID_ID);
         }
-        validateInput(voterInput, true);
+        validateInput(voterInput, true, voterId);
 
         Voter voter = voterRepository.findById(voterId).orElse(null);
         if (voter == null){
@@ -96,8 +97,21 @@ public class VoterService {
         return new GenericOutput("Voter deleted");
     }
 
-    private void validateInput(VoterInput voterInput, boolean isUpdate){
+    private void validateInput(VoterInput voterInput, boolean isUpdate, Long voterId){
+        Voter voterValidate;
         if (StringUtils.isBlank(voterInput.getEmail())){
+            throw new GenericOutputException("Invalid email");
+        }
+        if(isUpdate){
+            voterValidate = voterRepository.findById(voterId).orElse(null);
+            if(voterValidate != null){
+                if(!voterValidate.getEmail().equals(voterInput.getEmail())){
+                    if(voterRepository.findByEmail(voterInput.getEmail()) != null){
+                        throw new GenericOutputException("Invalid email");
+                    }
+                }
+            }
+        }else if(voterRepository.findByEmail(voterInput.getEmail()) != null){
             throw new GenericOutputException("Invalid email");
         }
         if (StringUtils.isBlank(voterInput.getName())){
