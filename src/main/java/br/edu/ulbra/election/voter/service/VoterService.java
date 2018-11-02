@@ -99,6 +99,7 @@ public class VoterService {
 
     private void validateInput(VoterInput voterInput, boolean isUpdate, Long voterId){
         Voter voterValidate;
+        String [] palavras;
         if (StringUtils.isBlank(voterInput.getEmail())){
             throw new GenericOutputException("Invalid email");
         }
@@ -116,6 +117,13 @@ public class VoterService {
         }
         if (StringUtils.isBlank(voterInput.getName())){
             throw new GenericOutputException("Invalid name");
+        }
+        if(voterInput.getName().length() < 5){
+            throw new GenericOutputException("Invalid name. Name must be at least 5 characters.");
+        }
+        palavras = voterInput.getName().split(" ");
+        if( palavras.length < 2){
+            throw new GenericOutputException("Invalid name. The name must have at least one last name.");
         }
         if (!StringUtils.isBlank(voterInput.getPassword())){
             if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){

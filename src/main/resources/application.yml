@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:file:C:\Users\Pâmela\AppData\Local\Temp\Voter
+    url: jdbc:h2:file:C:\Users\Leonardo\AppData\Local\Temp\Voter
     platform: h2
     username: sa
     driver-class-name: org.h2.Driver
