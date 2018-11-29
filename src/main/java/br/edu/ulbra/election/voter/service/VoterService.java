@@ -96,16 +96,16 @@ public class VoterService {
         if (voter == null) {
             throw new GenericOutputException(MESSAGE_VOTER_NOT_FOUND);
         }
-        checkVote(voterId);
+        checkVotes(voterId);
         voterRepository.delete(voter);
 
         return new GenericOutput("Voter deleted");
     }
 
-    private void checkVote(Long id) {
+    private void checkVotes(Long id) {
         try {
-            Boolean voto = electionClientService.getById(id);
-            if (voto) {
+            Boolean votes = electionClientService.getById(id);
+            if (votes) {
                 throw new GenericOutputException("This voter already has a vote");
             }
         } catch (FeignException e) {
